@@ -363,9 +363,9 @@ void WiFiManager::handleRoot() {
   page += FPSTR(HTTP_STYLE);
   page += _customHeadElement;
   page += FPSTR(HTTP_HEAD_END);
-  page += "<h1><center>";
+  page += "<b><center>";
   page += _apName;
-  page += "</center></h1>";
+  page += "</center></b><br/>";
   //page += F("<h3>WiFiManager</h3>");
   page += FPSTR(HTTP_PORTAL_OPTIONS);
   page += FPSTR(HTTP_END);
