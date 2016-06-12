@@ -88,6 +88,15 @@ void printDigits(int digits){
   Serial.print(digits);
 }
 
+String formatDigits(int digits){
+  // utility for digital clock display: prints preceding colon and leading 0
+  String res = ":";
+  if(digits < 10)
+    res +='0' ;
+  res += String(digits);
+}
+
+
 void digitalClockDisplay(){
   // digital clock display of the time
   Serial.print(hour());
