@@ -47,8 +47,9 @@ void displayTempHumLight(SensorData data){
   display.println("Lgt :" + String(data.light));
   Serial.println("displayTempHumLight >> 3");
   Serial.println("currentTime Start" );
-  String currentTime = String(hour());
-  //String currentTime = String(hour()) + formatDigits(minute()) + formatDigits(second());
+  String currentTime = String(day()) + "/" + String(month()) + "/" + String(year()) + " | " + String(hour()+TIME_ZONE);
+  // String currentTime = String(hour()+TIME_ZONE);
+  // String currentTime = String(hour()) + formatDigits(minute()) + formatDigits(second());
   Serial.println("currentTime" + currentTime);
   display.println(currentTime);
   display.display();

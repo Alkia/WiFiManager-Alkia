@@ -8,21 +8,37 @@
 #include <DNSServer.h>
 #include <ESP8266WebServer.h>
 #include <WiFiManager.h>          //https://github.com/tzapu/WiFiManager
+#include <PubSubClient.h>         // MQTT
 #include <TimeLib.h> 
 #include "globals.h"              // global structures and enums used by the application
 ///////////// Pin Set /////////////////
+const int TIME_ZONE = 7;
 const int OLED_SCL_PIN = D1;
 const int OLED_SDA_PIN = D2;
 const int DHT11PIN = D3;          // Temperature sensor PIN set on NodeMCU  
 const int analogInPin = A0;       // Numéro de la broche à laquelle est connecté la photorésistance
 #define OLED_RESET LED_BUILTIN    // We don't have the reset on this OLED so put the LED_BUILTIN 
+const int buttonPin = 0;          // NodeMCU pushbutton pin  // MQTT
+const int ledPin =  16;           // LED pin on NodeMCU      // MQTT
 ////////////// Constantes /////////////////
+const char* serialNumber = "BOX000001";            // MQTT used as the topic
+const String mqttServer = "m12.cloudmqtt.com";      // MQTT
+const char* mqttUser = "aiibmjah";                  // MQTT
+const char* mqttPassword = "xGRg9VsDPJVI";          // MQTT
+const int  mqttPort =  17987 ;                      // MQTT
+const int mqttSSLPort = 27987;                      // MQTT
+const int mqttWebsocketsPortTLSonly = 37987;        // MQTT
+const int mqttConnectionlimit = 10;                 // MQTT
+// MQTT Update these with values suitable for your network.
+IPAddress server(52,23,211,239); // CloudMQTT Server IP, ping m12.cloudmqtt.com to get 52.23.211.239
+
 
 ////////////// Global Objects /////////////
 Adafruit_SSD1306 display(OLED_RESET); // The OLED driver
 #if (SSD1306_LCDHEIGHT != 64)
 #error("Height incorrect, please fix Adafruit_SSD1306.h!");
 #endif
+
 ////////////// Global Variables ///////////
 SensorData data;
 SensorData old_data;     
@@ -36,15 +52,22 @@ String messageFrame2c = "";
 
 void setup() {            // your setup code here, to run once 
   Serial.begin(115200);
+  messageOverlay = "Start";
+  Serial.println(" --- ");
+  Serial.println(messageOverlay);
   OLED_init();            // Start OLED and Clear the buffer.
-  OLED_show_Alkia();      // Show ALKIA logo
+  delay(100);
+  messageOverlay = "OLED_show_Alkia";
+  Serial.println(messageOverlay);
+  OLED_show_Alkia();       // Show ALKIA logo
   light_setup();           // Indique que la broche analogInPin est une entrée
+  delay(100);
   //WiFiManager - Local intialization. Once its business is done, there is no need to keep it around
   OLED_show_WiFi();
   WiFiManager wifiManager;
   messageOverlay = "WiFiManager Start";
   Serial.println(messageOverlay);
-  OLED_scrolltext(messageOverlay);
+  // OLED_scrolltext(messageOverlay);
   //  wifiManager.resetSettings();  //reset settings - for testing | This creates problmem on the long run
   wifiManager.setMinimumSignalQuality(25);  //  Eliminate WiFi with quality under 25%
   //sets timeout until configuration portal gets turned off
@@ -82,12 +105,15 @@ void setup() {            // your setup code here, to run once
   delay(15);
   digitalClockDisplay(); // Display the time before refreshing NTP
   getCurrentTime(); // Refresh NTP
+  // MQTT
+  MQTT_setup();
   delay(1000);
   ///// Initialize the Humidity and temperature data
   getDht11Readings(); // Read Humidity and temperature
   old_data = data;
   Serial.println("========================");
   OLED_show_Ok();
+
 }
 
 void loop() { // main code here, to run repeatedly:
@@ -120,5 +146,6 @@ void loop() { // main code here, to run repeatedly:
     displayTempHumLight(data);
     }
   delay(50);
- // Serial.println("free Memory =");
+  // MQTT
+  MQTT_loop();
 }
