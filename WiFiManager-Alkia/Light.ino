@@ -10,11 +10,12 @@ void light_setup() {
 int light_read() {
   // lit la valeur de la photorésistance et
   // stocke le résultat dans sensorValue :
-  int sensorValue = analogRead(analogInPin);            
+  int sensorValue = abs(LIGHT_OFFSET - analogRead(analogInPin));            
+
   // change sensorValue vers une intervalle de 0 à 255
   // et stocke le résultat dans outputValue :
  /// outputValue = map(sensorValue, 0, 1023, 0, 255);       
-  // Debug Serial.println("\t output = " + String(sensorValue));   
+  // Debug USE_SERIAL.println("\t output = " + String(sensorValue));   
   data.light = sensorValue;  
   return sensorValue;  
 }

@@ -1,10 +1,48 @@
 #include <WiFiUdp.h>
-
-
 WiFiUDP Udp;
 unsigned int localPort = 8888;  // local port to listen for UDP packets
 const int timeZone = 0; 
 char isoTime[30];
+
+void printDigits(int digits){
+  // utility for digital clock display: prints preceding colon and leading 0
+  USE_SERIAL.print(":");
+  if(digits < 10)
+    USE_SERIAL.print('0');
+  USE_SERIAL.print(digits);
+}
+
+String formatDigits(int digits){
+  // utility for digital clock display: prints preceding colon and leading 0
+  String res = ":";
+  if(digits < 10)
+    res +='0' ;
+  res += String(digits);
+}
+
+void digitalClockDisplay(){
+  // digital clock display of the time
+  USE_SERIAL.print(hour());
+  printDigits(minute());
+  printDigits(second());
+  USE_SERIAL.print(" ");
+  USE_SERIAL.print(day());
+  USE_SERIAL.print(".");
+  USE_SERIAL.print(month());
+  USE_SERIAL.print(".");
+  USE_SERIAL.print(year()); 
+  USE_SERIAL.println(); 
+}
+
+void getCurrentTime(){
+  int ntpRetryCount = 0;
+  while (timeStatus() == timeNotSet && ++ntpRetryCount < 10) { // get NTP time
+    USE_SERIAL.println(WiFi.localIP());
+    setSyncProvider(getNtpTime);
+    setSyncInterval(60 * 60);  
+  }
+}
+
 
 char* GetISODateTime() {
   sprintf(isoTime, "%4d-%02d-%02dT%02d:%02d:%02d", year(), month(), day(), hour(), minute(), second());
@@ -20,13 +58,13 @@ time_t getNtpTime()
   Udp.begin(localPort);
   
   while (Udp.parsePacket() > 0) ; // discard any previously received packets
-  Serial.println("Transmit NTP Request");
+  USE_SERIAL.println("Transmit NTP Request");
   sendNTPpacket(timeServer);
   uint32_t beginWait = millis();
   while (millis() - beginWait < 1500) {
     int size = Udp.parsePacket();
     if (size >= NTP_PACKET_SIZE) {
-      Serial.println("Receive NTP Response");
+      USE_SERIAL.println("Receive NTP Response");
       Udp.read(packetBuffer, NTP_PACKET_SIZE);  // read packet into the buffer
       unsigned long secsSince1900;
       // convert four bytes starting at location 40 to a long integer
@@ -43,7 +81,7 @@ time_t getNtpTime()
 
   Udp.stop();
   
-  Serial.println("No NTP Response :-(");
+  USE_SERIAL.println("No NTP Response :-(");
   return 0; // return 0 if unable to get the time
 }
 
@@ -71,43 +109,10 @@ void sendNTPpacket(IPAddress &address)
 }
 
 
-void getCurrentTime(){
-  int ntpRetryCount = 0;
-  while (timeStatus() == timeNotSet && ++ntpRetryCount < 10) { // get NTP time
-    Serial.println(WiFi.localIP());
-    setSyncProvider(getNtpTime);
-    setSyncInterval(60 * 60);  
-  }
-}
-
-void printDigits(int digits){
-  // utility for digital clock display: prints preceding colon and leading 0
-  Serial.print(":");
-  if(digits < 10)
-    Serial.print('0');
-  Serial.print(digits);
-}
-
-String formatDigits(int digits){
-  // utility for digital clock display: prints preceding colon and leading 0
-  String res = ":";
-  if(digits < 10)
-    res +='0' ;
-  res += String(digits);
-}
 
 
-void digitalClockDisplay(){
-  // digital clock display of the time
-  Serial.print(hour());
-  printDigits(minute());
-  printDigits(second());
-  Serial.print(" ");
-  Serial.print(day());
-  Serial.print(".");
-  Serial.print(month());
-  Serial.print(".");
-  Serial.print(year()); 
-  Serial.println(); 
-}
+
+
+
+
 /**/
