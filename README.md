@@ -232,6 +232,7 @@ wifiManager.setCustomHeadElement("<style>html{filter: invert(100%); -webkit-filt
 WiFiManagerParameter custom_text("<p>This is just a text paragraph</p>");
 wifiManager.addParameter(&custom_text);
 ```
+
 - inject a custom bit of html in a configuration form element
 Just add the bit you want added as the last parameter to the custom parameter constructor.
 ```cpp
@@ -289,29 +290,35 @@ If trying to connect ends up in an endless loop, try to add `setConnectTimeout(6
 - added an alternative to waitForConnectResult() for debugging
 - changed `setTimeout(seconds)` to `setConfigPortalTimeout(seconds)`
 
+
 ##### 0.9
  - fixed support for encoded characters in ssid/pass
+ 
 
 ##### 0.8
  - made it compile on older versions of ESP8266 core as well, tested down to 2.0.0
  - added simple example for Custom IP
+ 
 
 ##### 0.7
  - added static IP in station mode
  - added example of persisting custom IP to FS config.json
  - more option on portal homepage
  - added on PlatformIO
+ 
 
 ##### 0.6
  - custom parameters
  - prettier
  - on demand config portal
  - commit #100 :D
+ 
 
 ##### 0.5
  - Added to Arduino Boards Manager - Thanks Max
  - moved most stuff to PROGMEM
  - added signal quality and a nice little padlock to show which networks are encrypted
+ 
 
 ##### v0.4 - all of it user contributed changes - Thank you
  - added ability to password protect the configuration Access Point
@@ -326,6 +333,7 @@ If trying to connect ends up in an endless loop, try to add `setConnectTimeout(6
 ##### v0.2
 needs the latest staging version (or at least a recent release of the staging version) to work
 
+
 ##### v0.1
 works with the staging release ver. 1.6.5-1044-g170995a, built on Aug 10, 2015 of the ESP8266 Arduino library.
 
@@ -333,35 +341,4 @@ works with the staging release ver. 1.6.5-1044-g170995a, built on Aug 10, 2015 o
 ### Contributions and thanks
 The support and help I got from the community has been nothing short of phenomenal. I can't thank you guys enough. This is my first real attept in developing open source stuff and I must say, now I understand why people are so dedicated to it, it is because of all the wonderful people involved.
 
-__THANK YOU__
-
-[Shawn A](https://github.com/tablatronix)
-
-[Maximiliano Duarte](https://github.com/domonetic)
-
-[alltheblinkythings](https://github.com/alltheblinkythings)
-
-[Niklas Wall](https://github.com/niklaswall)
-
-[Jakub Piasecki](https://github.com/zaporylie)
-
-[Peter Allan](https://github.com/alwynallan)
-
-[John Little](https://github.com/j0hnlittle)
-
-[markaswift](https://github.com/markaswift)
-
-[franklinvv](https://github.com/franklinvv)
-
-[Alberto Ricci Bitti](https://github.com/riccibitti)
-
-[SebiPanther](https://github.com/SebiPanther)
-
-[jonathanendersby](https://github.com/jonathanendersby)
-
-[walthercarsten](https://github.com/walthercarsten)
-
-Sorry if i have missed anyone.
-
-#### Inspiration
-- http://www.esp8266.com/viewtopic.php?f=29&t=2520
+_
